@@ -9,6 +9,8 @@ require('dotenv').config()
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var livreRouter = require('./routes/livre');
+var categorieRouter = require('./routes/categorie');
+
 
 var app = express();
 mongoose.connect(process.env.MONGO_URL)
@@ -24,10 +26,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
+app.use('/uploads',express.static('./uploads'))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/livre', livreRouter);
+app.use('/categorie', categorieRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

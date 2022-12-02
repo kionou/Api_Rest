@@ -4,40 +4,40 @@ const  mongoose  = require("mongoose");
 const livreSchema = new mongoose.Schema({
     titre:{
         type:String,
-        require:[ true]
+        required:true
 
     },
     auteur:{
         type:String,
-        require: true
+        required: true
 
     },
     langue:{
         type:String,
-        require: true,
+        required: true,
     },
     annee_edition:{
         type:String,
-        require:[ true]
+        required:[ true]
 
     },
     lieu_edition:{
         type:String,
-        require: true
+        required: true
 
     },
-    genre:{
+    genre_id:{
         type:String,
-        require: true,
+        required: true,
     },
 
     image:{
         type:String,
-        require: true,
+        required: true,
     },
     description:{
         type:String,
-        require:[ true]
+        required:[ true]
     }
 
 },
@@ -49,5 +49,5 @@ const livreSchema = new mongoose.Schema({
 
 
 
-const Livre = mongoose.model('user',livreSchema)
+const Livre = mongoose.model('Livre',livreSchema)
 module.exports = Livre
