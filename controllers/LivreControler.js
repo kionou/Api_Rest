@@ -13,7 +13,7 @@ const dataLivre = class{
         const livre = await Livredata.LivrerAll()
         if (livre.success) {
        
-            res.status(201).send(livre.success)
+            res.status(201).json({"resultat":livre.success})
         } else {
             res.status(400).json({"Une erreur est surveni":livre.erreur})
         }
@@ -21,7 +21,7 @@ const dataLivre = class{
     }
 
     static PostLivre = async (req =request,res =response)=>{
-        console.log('boby',req.body , req.file);
+        console.log('bobyjj',req.body , req.file);
 
     const livre = await Livredata.InsertionLivre(req.body,req.file.path)
     if (livre.success) {
@@ -36,7 +36,7 @@ const dataLivre = class{
 }
 
 static GetLivrebyId = async (req =request,res =response)=>{
-    console.log('boby',req.params.id);
+    console.log('boby22',req.params.id);
 
 const livre = await Livredata.IdbyLivre(req.params.id)
 if (livre.success) {

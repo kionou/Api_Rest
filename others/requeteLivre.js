@@ -63,10 +63,11 @@ const Livredata = class{
     }
 
     static IdbyLivre=  (into)=>{
+        console.log('into',into);
         return new Promise(async (next)=>{
           await  Livre.findById({_id:into})
             .then(resultat=>{
-                console.log('ss',resultat);
+                console.log('ssnn',resultat);
                Stockdata.IdbyStock(resultat._id)
                .then(result=>{
                  next({success:{livre:resultat , stock:result}})

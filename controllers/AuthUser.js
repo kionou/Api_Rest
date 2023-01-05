@@ -9,20 +9,21 @@ const bcrypt = require('bcrypt')
 const UserControler = class {
 
     static UserSign = async (req = request, res = response) => {
+        console.log('reqbody', req.body);
         const user = await Userdata.UserOne(req.body.email)
         if (user.alert) {
-            const token = jsonwt.CreerToken(req.body , '1h')
+            const token = jsonwt.CreerToken(req.body, '1h')
             mailer(req.body.email, token)
                 .then(resultat => {
-                    res.status(201).json({ 'message': 'Verifiez votre boite Email pour finaliser votre inscription ' })
+                    res.status(201).json({ 'message': 'Verifiez votre boite Email pour finaliser votre inscription' })
 
                 }).catch(err => {
                     console.log("eee", err);
-                    res.status(400).json({ "alert": "message non envoyer" })
+                    res.status(400).json({ "error": "message non envoyer" })
 
                 })
         } else if (user.success) {
-            res.status(201).json({ 'message': 'L\'adresse Email existe deja , veuillez-vous connectés ! ' })
+            res.status(201).json({ 'alert': 'L\'adresse Email existe deja , veuillez-vous connectés ! ' })
         }
 
     }
@@ -41,8 +42,6 @@ const UserControler = class {
 
         } else {
             res.status(400).json({ "alert": "Session expirer veuillez recommener" })
-
-
         }
 
     }
@@ -52,10 +51,9 @@ const UserControler = class {
         if (user.success) {
             const auth = await bcrypt.compare(req.body.password, user.success.password)
             if (auth) {
-                console.log('cest bon ', auth);
-                const token = jsonwt.CreerToken(user.success._id , '30d')
+                const token = jsonwt.CreerToken( user.success._id ,'30d')
                 res.cookie('jwt', token, { httpOnly: true, maxAge: 3 * 24 * 60 * 60 * 1000 })
-                res.status(201).json({ "Utilisateur connecter avec success": token })
+                res.status(201).json({ "connecter": token })
 
             } else {
                 res.status(201).json({ "alert": "Mot de pase incorrect" })
@@ -89,16 +87,53 @@ const UserControler = class {
 
     static GetUserbyId = async (req = request, res = response) => {
 
+        const cookies = req.cookies.jwt
+        console.log('cookies',req.cookies.jwt);
+        if (cookies) {
+        const token = await jsonwt.VerifierToken(cookies)
 
-        const user = await Userdata.UserbyId(req.params.id)
-        if (user.success) {
+              console.log('tokennn',token );
+        if (token.success) {
+            const user = await Userdata.UserbyId(token.success.into)
+            if (user.success) {
 
-            res.status(201).send({ "resultat": user.success })
+                res.status(201).send({ "resultat": user.success })
+            } else {
+                console.log('errrreurrrr', user.erreur);
+                const error = handlErrors(user.erreur)
+                res.status(400).json({ "error": error })
+            }
+
         } else {
-            console.log('errrreurrrr', user.erreur);
-            const error = handlErrors(user.erreur)
-            res.status(400).json({ "alert": error })
+            res.status(400).json({ "alert": "Session expirer veuillez recommener" })
         }
+            
+        } else {
+                res.status(400).json({ "alert": "Le token est null " })
+            
+        }
+
+        // console.log('req.params', req.params.id);
+        // console.log('req.params?cokiess', req.cookies.jwt);
+
+        // const token = await jsonwt.VerifierToken(req.cookies.jwt)
+
+        // console.log('tokennn',token );
+        // if (token.success) {
+        //     const user = await Userdata.UserbyId(token.success)
+        //     if (user.success) {
+
+        //         res.status(201).send({ "resultat": user.success })
+        //     } else {
+        //         console.log('errrreurrrr', user.erreur);
+        //         const error = handlErrors(user.erreur)
+        //         res.status(400).json({ "alert": error })
+        //     }
+
+        // } else {
+        //     res.status(400).json({ "alert": "Session expirer veuillez recommener" })
+        // }
+
 
     }
 
@@ -132,15 +167,15 @@ const UserControler = class {
     }
 
     static Logout = async (req = request, res = response) => {
-            res.cookie('jwt', '' ,{maxAge:1})
-            res.status(201).send({ "message": "user deconnecter avec success" })
+        res.cookie('jwt', '', { maxAge: 1 })
+        res.status(201).send({ "message": "user deconnecter avec success" })
 
 
-       
+
 
     }
 
-   
+
 
 
 

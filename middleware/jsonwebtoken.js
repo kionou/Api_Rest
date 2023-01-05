@@ -3,11 +3,11 @@ require('dotenv').config()
 
 const jsonwt = class {
     static CreerToken = (into , temps) => {
-        let dataUser = { ...into }
-
+        let dataUser = {into}
+console.log('into',dataUser);
         const token = jwt.sign(dataUser, process.env.SECRET_JWT, { expiresIn: temps });
         console.log(token);
-        return token;
+        return token; 
 
     }
 
@@ -36,7 +36,7 @@ const jsonwt = class {
             jwt.verify(token, process.env.SECRET_JWT,(err,decodedToken) =>{
                 if (err) {
                     console.log(err.message);
-                    res.redirect('/users/login')
+                    res.redirect('/connection')
                     
                 } else {
                     console.log("decodedToken",decodedToken);
@@ -44,7 +44,7 @@ const jsonwt = class {
                 }
             });
         } else {
-            res.redirect('/users/login')
+            res.redirect('/connection')
         }
         
     }
